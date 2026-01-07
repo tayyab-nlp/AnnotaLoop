@@ -8,6 +8,7 @@ import type { Project, DeleteType, Document as AppDocument } from './context/typ
 import { isTauri } from '@tauri-apps/api/core';
 import { getCurrentWindow, PhysicalSize } from '@tauri-apps/api/window';
 import { useProjectExportImport } from './hooks/useProjectExportImport';
+import { UpdaterBanner } from './UpdaterBanner';
 
 // Modals
 import ProjectModal from './components/modals/ProjectModal';
@@ -327,6 +328,7 @@ const AppContent = () => {
       onOpenImportModal={exportImport.handleOpenProjectImport}
       hideHeader={configProjectId === null && annotatingDocId !== null || (!currentProject && projects.length === 0)}
     >
+      <UpdaterBanner />
       {configProjectId === null && annotatingDocId !== null ? (
         <AnnotationPage />
       ) : currentProject ? (
