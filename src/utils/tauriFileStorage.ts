@@ -147,7 +147,7 @@ export async function fileExists(
  * @returns Blob URL
  */
 export function createBlobUrl(data: Uint8Array, mimeType: string): string {
-    const blob = new Blob([data], { type: mimeType });
+    const blob = new Blob([data as any], { type: mimeType });
     return URL.createObjectURL(blob);
 }
 
