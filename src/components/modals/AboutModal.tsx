@@ -48,7 +48,13 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             if (isDev) {
                 addToast('Update checker only works in production builds', 'info');
             } else {
-                addToast('Failed to check for updates', 'error');
+                // Show more specific error for debugging
+                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+                    addToast('Update server unreachable. Check your internet connection.', 'error');
+                } else {
+                    addToast(`Update check failed: ${errorMessage}`, 'error');
+                }
             }
         } finally {
             setIsCheckingUpdate(false);
@@ -124,7 +130,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                             <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Links & Contact</h3>
 
                             <button
-                                onClick={() => openExternal('https://tayyab.io/projects/annotaloop')}
+                                onClick={() => openExternal('https://tayyab.io/annotaloop/')}
                                 className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-900 transition-all group flex items-center gap-3"
                             >
                                 <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
@@ -132,7 +138,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                 </div>
                                 <div className="flex-1 text-left">
                                     <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary block">Project Website</span>
-                                    <span className="text-xs text-gray-500">tayyab.io/projects/annotaloop</span>
+                                    <span className="text-xs text-gray-500">tayyab.io/annotaloop</span>
                                 </div>
                                 <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-primary" />
                             </button>

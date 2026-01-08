@@ -14,25 +14,25 @@ const VIDEO_TUTORIALS = [
         title: 'Start Your First Project',
         description: 'Create project, configure labels, annotate with AI, review, and export',
         duration: '~6 min',
-        link: 'https://tayyab.io/projects/annotaloop/#video-complete-workflow'
+        link: 'https://tayyab.io/annotaloop/#video-complete-workflow'
     },
     {
         title: 'LLM Setup Guide',
         description: 'Install and configure Ollama, LM Studio, or cloud LLMs',
         duration: '~4 min',
-        link: 'https://tayyab.io/projects/annotaloop/#video-llm-setup'
+        link: 'https://tayyab.io/annotaloop/#video-llm-setup'
     },
     {
         title: 'Batch Processing',
         description: 'Annotate multiple documents efficiently with batch workflows',
         duration: '~3 min',
-        link: 'https://tayyab.io/projects/annotaloop/#video-batch-processing'
+        link: 'https://tayyab.io/annotaloop/#video-batch-processing'
     },
     {
         title: 'Import & Export Projects',
         description: 'Share projects, backup data, and export in multiple formats',
         duration: '~3 min',
-        link: 'https://tayyab.io/projects/annotaloop/#video-import-export'
+        link: 'https://tayyab.io/annotaloop/#video-import-export'
     }
 ];
 
@@ -141,7 +141,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                             </div>
 
                             <button
-                                onClick={() => openExternal('https://tayyab.io/projects/annotaloop')}
+                                onClick={() => openExternal('https://tayyab.io/annotaloop/')}
                                 className="mt-6 flex items-center gap-2 text-sm text-primary hover:underline"
                             >
                                 View all tutorials and features

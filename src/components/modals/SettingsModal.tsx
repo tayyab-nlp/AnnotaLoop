@@ -34,6 +34,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
 
+    // Factory reset state
+    const [showFactoryResetConfirm, setShowFactoryResetConfirm] = useState(false);
+    const [factoryResetInput, setFactoryResetInput] = useState('');
+
     // Reset tab to first tab when modal opens and load version
     React.useEffect(() => {
         if (isOpen) {
@@ -44,6 +48,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             setNewPin('');
             setConfirmPin('');
             setPinError('');
+            // Reset factory reset state
+            setShowFactoryResetConfirm(false);
+            setFactoryResetInput('');
             // Load current version
             getVersion().then(setCurrentVersion).catch(() => setCurrentVersion('Unknown'));
         }
@@ -450,6 +457,60 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                             </button>
                                         </div>
                                     )}
+
+                                    {/* Danger Zone - Factory Reset */}
+                                    <div className="mt-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
+                                        <label className="block text-xs font-bold text-red-600 dark:text-red-400 uppercase mb-2">Danger Zone</label>
+
+                                        {!showFactoryResetConfirm ? (
+                                            <>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                                                    Factory reset will clear all your data including projects, documents, and settings.
+                                                </p>
+                                                <button
+                                                    onClick={() => setShowFactoryResetConfirm(true)}
+                                                    className="w-full bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 py-1.5 rounded text-xs font-medium hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                                                >
+                                                    Factory Reset
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <p className="text-xs text-red-600 dark:text-red-400 mb-2 font-medium">
+                                                    ⚠️ This will permanently delete ALL data. Type DELETE to confirm.
+                                                </p>
+                                                <input
+                                                    type="text"
+                                                    value={factoryResetInput}
+                                                    onChange={(e) => setFactoryResetInput(e.target.value.toUpperCase())}
+                                                    className="w-full bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 rounded px-2 py-1.5 text-xs font-mono text-center mb-2"
+                                                    placeholder="DELETE"
+                                                />
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => { setShowFactoryResetConfirm(false); setFactoryResetInput(''); }}
+                                                        className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-1.5 rounded text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (factoryResetInput === 'DELETE') {
+                                                                localStorage.clear();
+                                                                sessionStorage.clear();
+                                                                addToast('Factory reset complete. Reloading...', 'success');
+                                                                setTimeout(() => window.location.reload(), 1500);
+                                                            }
+                                                        }}
+                                                        disabled={factoryResetInput !== 'DELETE'}
+                                                        className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white py-1.5 rounded text-xs font-medium transition-colors disabled:cursor-not-allowed"
+                                                    >
+                                                        Confirm Reset
+                                                    </button>
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

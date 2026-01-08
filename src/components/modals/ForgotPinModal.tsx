@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { AlertTriangle } from 'lucide-react';
 
 interface ForgotPinModalProps {
     isOpen: boolean;
@@ -10,9 +11,10 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
     const { security, setSecurity, unlockApp, showToast } = useApp();
     const [secretKey, setSecretKey] = useState('');
     const [error, setError] = useState('');
-    const [step, setStep] = useState<'verify' | 'reset'>('verify');
+    const [step, setStep] = useState<'verify' | 'reset' | 'factory-reset'>('verify');
     const [newPin, setNewPin] = useState('');
     const [confirmPin, setConfirmPin] = useState('');
+    const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
     if (!isOpen) return null;
 
@@ -52,6 +54,28 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
         setConfirmPin('');
         setError('');
         setStep('verify');
+        setDeleteConfirmation('');
+    };
+
+    const handleFactoryReset = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (deleteConfirmation !== 'DELETE') {
+            setError('Please type DELETE to confirm');
+            return;
+        }
+
+        // Clear all localStorage data
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Show success message and reload
+        showToast('success', 'Factory Reset Complete', 'All data has been cleared. The app will now reload.');
+
+        // Reload after a short delay to show the toast
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
     };
 
     const handleClose = () => {
@@ -61,6 +85,7 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
         setConfirmPin('');
         setError('');
         setStep('verify');
+        setDeleteConfirmation('');
     };
 
     return (
@@ -75,7 +100,7 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
                             <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11.536 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                             </svg>
-                            {step === 'verify' ? 'Forgot PIN?' : 'Reset PIN'}
+                            {step === 'verify' ? 'Forgot PIN?' : step === 'reset' ? 'Reset PIN' : 'Factory Reset'}
                         </h2>
                         <button
                             onClick={handleClose}
@@ -134,8 +159,18 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
                                     </button>
                                 </div>
                             </form>
+
+                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                                <button
+                                    type="button"
+                                    onClick={() => { setStep('factory-reset'); setError(''); }}
+                                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                                >
+                                    Lost your recovery key? Factory reset instead
+                                </button>
+                            </div>
                         </>
-                    ) : (
+                    ) : step === 'reset' ? (
                         <>
                             <div className="mb-6 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                                 <p className="text-sm text-green-700 dark:text-green-400">
@@ -201,7 +236,64 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
                                 </div>
                             </form>
                         </>
-                    )}
+                    ) : step === 'factory-reset' ? (
+                        <>
+                            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                <div className="flex items-start gap-3">
+                                    <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+                                    <div>
+                                        <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">
+                                            Warning: This will delete all your data
+                                        </p>
+                                        <p className="text-xs text-red-600 dark:text-red-400">
+                                            All projects, documents, annotations, settings, and API keys will be permanently deleted. This action cannot be undone.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleFactoryReset}>
+                                <div className="mb-4">
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Type <span className="font-mono font-bold text-red-600">DELETE</span> to confirm
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={deleteConfirmation}
+                                        onChange={(e) => {
+                                            setDeleteConfirmation(e.target.value.toUpperCase());
+                                            setError('');
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono tracking-wider text-center"
+                                        placeholder="DELETE"
+                                        autoFocus
+                                    />
+                                    {error && (
+                                        <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                                            {error}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-3 mt-8">
+                                    <button
+                                        type="button"
+                                        onClick={() => { setStep('verify'); setDeleteConfirmation(''); setError(''); }}
+                                        className="flex-1 px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors font-medium"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={deleteConfirmation !== 'DELETE'}
+                                        className="flex-1 px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Factory Reset
+                                    </button>
+                                </div>
+                            </form>
+                        </>
+                    ) : null}
                 </div>
             </div>
         </div>

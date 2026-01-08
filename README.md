@@ -8,7 +8,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/tayyab-nlp/AnnotaLoop)](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/tayyab-nlp/AnnotaLoop/total)](https://github.com/tayyab-nlp/AnnotaLoop/releases)
 
-[Website](https://tayyab.io/projects/annotaloop) • [Download](#download) • [Features](#features) • [Videos](#video-tutorials) • [Support](https://github.com/tayyab-nlp/AnnotaLoop/issues)
+[Website](https://tayyab.io/annotaloop) • [Download](#download) • [Features](#features) • [Videos](#video-tutorials) • [Support](https://github.com/tayyab-nlp/AnnotaLoop/issues)
 
 </div>
 
@@ -90,10 +90,10 @@ Get started quickly with these comprehensive video guides:
 
 | Tutorial | Description |
 |----------|-------------|
-| [Start Your First Project](https://tayyab.io/projects/annotaloop/#video-complete-workflow) | Complete walkthrough from setup to export |
-| [LLM Setup Guide](https://tayyab.io/projects/annotaloop/#video-llm-setup) | Configure your AI provider |
-| [Batch Processing](https://tayyab.io/projects/annotaloop/#video-batch-processing) | Process multiple documents at once |
-| [Import & Export](https://tayyab.io/projects/annotaloop/#video-import-export) | Manage your annotation projects |
+| [Start Your First Project](https://tayyab.io/annotaloop/#video-complete-workflow) | Complete walkthrough from setup to export |
+| [LLM Setup Guide](https://tayyab.io/annotaloop/#video-llm-setup) | Configure your AI provider |
+| [Batch Processing](https://tayyab.io/annotaloop/#video-batch-processing) | Process multiple documents at once |
+| [Import & Export](https://tayyab.io/annotaloop/#video-import-export) | Manage your annotation projects |
 
 ---
 
@@ -252,7 +252,7 @@ Need help or found a bug?
 - Check the [video tutorials](#video-tutorials)
 - Open an [issue](https://github.com/tayyab-nlp/AnnotaLoop/issues)
 - Contact: [hello@tayyab.io](mailto:hello@tayyab.io)
-- Visit: [tayyab.io/projects/annotaloop](https://tayyab.io/projects/annotaloop)
+- Visit: [tayyab.io/annotaloop](https://tayyab.io/annotaloop)
 
 ---
 
@@ -271,6 +271,6 @@ Built with modern open-source technologies and powered by state-of-the-art LLMs 
 
 Made with ❤️ by [Tayyab](https://tayyab.io)
 
-[⭐ Star on GitHub](https://github.com/tayyab-nlp/AnnotaLoop) • [Visit Website](https://tayyab.io/projects/annotaloop) • [⬇️ Download](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest)
+[⭐ Star on GitHub](https://github.com/tayyab-nlp/AnnotaLoop) • [Visit Website](https://tayyab.io/annotaloop) • [⬇️ Download](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest)
 
 </div>

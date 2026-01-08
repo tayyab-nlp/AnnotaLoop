@@ -13,7 +13,7 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({ onCreateProject, onImportProject, onViewSampleProject }) => {
     const handleWatchDemo = async () => {
         try {
-            await open('https://tayyab.io/projects/annotaloop/#video-complete-workflow');
+            await open('https://tayyab.io/annotaloop/#video-complete-workflow');
         } catch (error) {
             console.error('Failed to open demo video link:', error);
         }
