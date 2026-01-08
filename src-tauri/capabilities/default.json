@@ -24,6 +24,8 @@
     "dialog:allow-save",
     "dialog:allow-open",
     "shell:allow-open",
+    "updater:default",
+    "store:default",
     {
       "identifier": "http:allow-fetch",
       "allow": [
