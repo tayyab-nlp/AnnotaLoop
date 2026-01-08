@@ -20,13 +20,13 @@ Get the latest version of AnnotaLoop for your platform:
 
 | Platform | Download Link | Architecture |
 |----------|--------------|--------------|
-| **🍎 macOS (Apple Silicon)** | [Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_0.1.4_aarch64.dmg) | ARM64 |
-| **🍎 macOS (Intel)** | [Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_0.1.4_x64.dmg) | x64 |
-| **🪟 Windows** | [Download Installer](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_0.1.4_x64-setup.exe) | x64 |
-| **🐧 Linux (AppImage)** | [Download AppImage](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_0.1.4_amd64.AppImage) | x86_64 |
-| **🐧 Linux (Debian)** | [Download .deb](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_0.1.4_amd64.deb) | x86_64 |
+| **🍎 macOS (Apple Silicon)** | [Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_aarch64.dmg) | ARM64 |
+| **🍎 macOS (Intel)** | [Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_x64.dmg) | x64 |
+| **🪟 Windows** | [Download Installer](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_x64-setup.exe) | x64 |
+| **🐧 Linux (AppImage)** | [Download AppImage](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_amd64.AppImage) | x86_64 |
+| **🐧 Linux (Debian)** | [Download .deb](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_amd64.deb) | x86_64 |
 
-> **💡 Note:** For the latest version, visit the [Releases page](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest).
+> **💡 Note:** For all available versions, visit the [Releases page](https://github.com/tayyab-nlp/AnnotaLoop/releases).
 
 ### macOS Installation
 
@@ -68,16 +68,13 @@ AnnotaLoop is a powerful desktop application that streamlines document annotatio
 
 ### Workflow
 
-```mermaid
-graph LR
-    A[Import Documents] --> B[Configure Labels & Rules]
-    B --> C[AI Processing]
-    C --> D[Human Review]
-    D --> E{Accept?}
-    E -->|Yes| F[Export Data]
-    E -->|No| D
-    F --> G[JSON/CSV/PDF]
-```
+<div align="center">
+
+![AnnotaLoop Workflow](docs/screenshots/workflow.png)
+
+*Document → AI Suggests → Human Reviews → Structured Output*
+
+</div>
 
 1. **Import** your documents (PDF, DOCX, TXT, Markdown)
 2. **Configure** labels and extraction rules for your use case
@@ -100,21 +97,24 @@ Get started quickly with these comprehensive video guides:
 
 ---
 
-##  Screenshots
+## 📸 Screenshots
 
 <div align="center">
 
-### Dashboard
-![Dashboard](https://via.placeholder.com/800x500/0F8A7D/FFFFFF?text=AnnotaLoop+Dashboard)
+### Welcome Screen - Getting Started
+![Empty State](docs/screenshots/empty-state.png)
 
-### Annotation Workflow
-![Annotation](https://via.placeholder.com/800x500/0F8A7D/FFFFFF?text=AI-Assisted+Annotation)
+### Project Configuration - Labels & Rules
+![Configuration Modal](docs/screenshots/config-modal.png)
 
-### Review Panel
-![Review](https://via.placeholder.com/800x500/0F8A7D/FFFFFF?text=Review+%26+Edit)
+### Project Dashboard - Document Management
+![Project Dashboard](docs/screenshots/project-dashboard.png)
 
-### Export Options
-![Export](https://via.placeholder.com/800x500/0F8A7D/FFFFFF?text=Export+Your+Data)
+### Review Panel - AI Annotations
+![Review Panel](docs/screenshots/review-panel.png)
+
+### Export & Analysis
+![Export Page](docs/screenshots/export-page.png)
 
 </div>
 
@@ -178,7 +178,7 @@ AnnotaLoop/
 │   ├── capabilities/       # Tauri permissions
 │   └── tauri.conf.json     # Tauri configuration
 ├── .github/workflows/      # CI/CD automation
-└── public/                 # Static assets
+└── docs/                   # Documentation & screenshots
 ```
 
 ---
@@ -191,49 +191,6 @@ AnnotaLoop includes automatic update functionality:
 - Notifies users when a new version is available
 - One-click download and installation
 - Seamless update process with automatic restart
-
----
-
-## 🚀 Creating a Release
-
-Follow these steps to publish a new version:
-
-### 1. Update Version
-
-Edit `src-tauri/tauri.conf.json`:
-
-```json
-{
-  "version": "0.2.0"  // Increment version
-}
-```
-
-### 2. Commit and Tag
-
-```bash
-git add .
-git commit -m "Release v0.2.0: Description of changes"
-git push origin main
-
-# Create and push tag (MUST start with 'app-v')
-git tag app-v0.2.0
-git push origin app-v0.2.0
-```
-
-### 3. GitHub Actions
-
-The tag push triggers the release workflow which:
-- Builds for macOS (Apple Silicon & Intel), Windows, and Linux
-- Signs the binaries for auto-updates
-- Creates a draft release with all installers
-- Generates `latest.json` for the update checker
-
-### 4. Publish
-
-1. Go to [Releases](https://github.com/tayyab-nlp/AnnotaLoop/releases)
-2. Edit the draft release
-3. Add release notes
-4. Click **Publish release**
 
 ---
 
