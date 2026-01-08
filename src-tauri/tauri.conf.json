@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "anotaloopv2",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "identifier": "com.annotaloop.desktop",
   "build": {
     "frontendDist": "../dist",
@@ -27,7 +27,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg3QjU0RTlCMjAxRDQzNTMKUldSVFF4MGdtMDYxaDE0cDduR3pyMDZlTUtPeEtjeU00UjNsMGlIMFV3T2x5eVh2aTcwMG5SWjQK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEUzRjQyNjJEQzA5Mzk3OTcKUldTWGw1UEFMU2IwNDN2U2V1enZyM2VhMmVuNm91VlFUUEZEeER5Qnc4ejZKT1hqZHF4dllWVTEK",
       "endpoints": [
         "https://github.com/vtayyab6/AnnotaLoop/releases/latest/download/latest.json"
       ],
