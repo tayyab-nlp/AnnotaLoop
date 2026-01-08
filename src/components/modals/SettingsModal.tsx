@@ -4,6 +4,7 @@ import { Lock, RefreshCw, Download, CheckCircle, AlertCircle } from 'lucide-reac
 import { check as checkUpdate } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
 import { getVersion } from '@tauri-apps/api/app';
+import { clearSecureStorage } from '../../utils/secureStorage';
 
 import LLMConfigSection from './LLMConfigSection';
 import CustomSelect, { type Option, type OptionGroup } from '../ui/CustomSelect';
@@ -494,8 +495,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                                         Cancel
                                                     </button>
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={async () => {
                                                             if (factoryResetInput === 'DELETE') {
+                                                                try {
+                                                                    await clearSecureStorage();
+                                                                } catch (error) {
+                                                                    console.error('Failed to clear secure storage:', error);
+                                                                }
                                                                 localStorage.clear();
                                                                 sessionStorage.clear();
                                                                 addToast('Factory reset complete. Reloading...', 'success');

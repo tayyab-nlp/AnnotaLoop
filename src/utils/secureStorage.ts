@@ -169,3 +169,124 @@ export async function clearSecureStorage(): Promise<void> {
         throw error;
     }
 }
+
+// ============================================
+// Security State Storage (App Lock)
+// ============================================
+
+export interface SecurityState {
+    enabled: boolean;
+    pin: string;
+    secret: string;
+    locked: boolean;
+}
+
+const DEFAULT_SECURITY: SecurityState = {
+    enabled: false,
+    pin: '1234',
+    secret: 'A7X9-B2M4-L8Q1',
+    locked: false
+};
+
+/**
+ * Save security state to secure storage
+ */
+export async function saveSecurityState(security: SecurityState): Promise<void> {
+    try {
+        const store = await getSecureStore();
+        await store.set('security_enabled', security.enabled);
+        await store.set('security_pin', security.pin);
+        await store.set('security_secret', security.secret);
+        // Note: We don't persist 'locked' state - it should always lock on fresh load if enabled
+        await store.save();
+        console.log('[SecureStorage] Saved security state');
+    } catch (error) {
+        console.error('[SecureStorage] Failed to save security state:', error);
+        throw error;
+    }
+}
+
+/**
+ * Load security state from secure storage
+ */
+export async function loadSecurityState(): Promise<SecurityState> {
+    try {
+        const store = await getSecureStore();
+        const enabled = await store.get<boolean>('security_enabled');
+        const pin = await store.get<string>('security_pin');
+        const secret = await store.get<string>('security_secret');
+
+        // If no data found, return defaults
+        if (enabled === null || enabled === undefined) {
+            return { ...DEFAULT_SECURITY };
+        }
+
+        return {
+            enabled: enabled,
+            pin: pin ?? DEFAULT_SECURITY.pin,
+            secret: secret ?? DEFAULT_SECURITY.secret,
+            locked: enabled // If enabled, start locked
+        };
+    } catch (error) {
+        console.error('[SecureStorage] Failed to load security state:', error);
+        return { ...DEFAULT_SECURITY };
+    }
+}
+
+/**
+ * Clear security state from secure storage (for factory reset)
+ */
+export async function clearSecurityState(): Promise<void> {
+    try {
+        const store = await getSecureStore();
+        await store.delete('security_enabled');
+        await store.delete('security_pin');
+        await store.delete('security_secret');
+        await store.save();
+        console.log('[SecureStorage] Cleared security state');
+    } catch (error) {
+        console.error('[SecureStorage] Failed to clear security state:', error);
+        throw error;
+    }
+}
+
+/**
+ * Migrate security state from localStorage to secure storage
+ */
+export async function migrateSecurityFromLocalStorage(): Promise<void> {
+    try {
+        // Check if already migrated (security exists in store)
+        const store = await getSecureStore();
+        const existingEnabled = await store.get<boolean>('security_enabled');
+
+        // If security data exists in store, skip migration
+        if (existingEnabled !== null && existingEnabled !== undefined) {
+            console.log('[SecureStorage] Security already in secure storage, skipping migration');
+            return;
+        }
+
+        // Check localStorage for security data
+        const localStorageSecurity = localStorage.getItem('security');
+        if (!localStorageSecurity) {
+            console.log('[SecureStorage] No localStorage security data to migrate');
+            return;
+        }
+
+        const parsed = JSON.parse(localStorageSecurity);
+
+        // Save to secure storage
+        await saveSecurityState({
+            enabled: parsed.enabled ?? false,
+            pin: parsed.pin ?? DEFAULT_SECURITY.pin,
+            secret: parsed.secret ?? DEFAULT_SECURITY.secret,
+            locked: parsed.enabled ?? false
+        });
+
+        // Remove from localStorage
+        localStorage.removeItem('security');
+
+        console.log('[SecureStorage] Migrated security state from localStorage to secure storage');
+    } catch (error) {
+        console.error('[SecureStorage] Failed to migrate security from localStorage:', error);
+    }
+}

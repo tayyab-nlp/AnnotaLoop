@@ -11,6 +11,11 @@ import type {
     BatchProcessingState
 } from './types';
 import { initialProjects, initialDocuments } from './defaults';
+import {
+    loadSecurityState,
+    saveSecurityState,
+    migrateSecurityFromLocalStorage
+} from '../utils/secureStorage';
 
 interface AppContextProps extends AppState {
     setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
@@ -69,22 +74,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const [view, setView] = useState<ViewType>('grid');
     const [deleteType, setDeleteType] = useState<DeleteType>(null);
     const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
-    const [security, setSecurity] = useState<SecurityState>(() => {
-        const saved = localStorage.getItem('security');
-        const parsed = saved ? JSON.parse(saved) : {
-            enabled: false,
-            pin: '1234',
-            secret: 'A7X9-B2M4-L8Q1',
-            locked: false
-        };
 
-        // Auto-lock on load if enabled and not unlocked in session
-        if (parsed.enabled && !sessionStorage.getItem('unlocked')) {
-            parsed.locked = true;
-        }
-
-        return parsed;
+    // Security state - initialized with defaults, loaded from Tauri Store on mount
+    const [security, setSecurity] = useState<SecurityState>({
+        enabled: false,
+        pin: '1234',
+        secret: 'A7X9-B2M4-L8Q1',
+        locked: false
     });
+    const [securityLoaded, setSecurityLoaded] = useState(false);
     const [settings, setSettings] = useState<SettingsState>(() => {
         const saved = localStorage.getItem('settings');
         return saved ? JSON.parse(saved) : {
@@ -149,9 +147,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         localStorage.setItem('settings', JSON.stringify(settings));
     }, [settings]);
 
+    // Load security from Tauri Store on mount (async)
     useEffect(() => {
-        localStorage.setItem('security', JSON.stringify(security));
-    }, [security]);
+        const loadSecurity = async () => {
+            try {
+                // First try to migrate from localStorage if needed
+                await migrateSecurityFromLocalStorage();
+
+                // Then load from Tauri Store
+                const loadedSecurity = await loadSecurityState();
+
+                // Auto-lock on load if enabled and not unlocked in session
+                if (loadedSecurity.enabled && !sessionStorage.getItem('unlocked')) {
+                    loadedSecurity.locked = true;
+                }
+
+                setSecurity(loadedSecurity);
+                setSecurityLoaded(true);
+                console.log('[AppContext] Security loaded from Tauri Store');
+            } catch (error) {
+                console.error('[AppContext] Failed to load security:', error);
+                setSecurityLoaded(true); // Continue with defaults
+            }
+        };
+        loadSecurity();
+    }, []);
+
+    // Save security to Tauri Store when it changes (after initial load)
+    useEffect(() => {
+        if (!securityLoaded) return; // Don't save until initial load is complete
+
+        const saveSecurity = async () => {
+            try {
+                await saveSecurityState(security);
+            } catch (error) {
+                console.error('[AppContext] Failed to save security:', error);
+            }
+        };
+        saveSecurity();
+    }, [security, securityLoaded]);
 
     useEffect(() => {
         // Persist theme and sync with Tauri window

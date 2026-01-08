@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { AlertTriangle } from 'lucide-react';
+import { clearSecureStorage } from '../../utils/secureStorage';
 
 interface ForgotPinModalProps {
     isOpen: boolean;
@@ -57,7 +58,7 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
         setDeleteConfirmation('');
     };
 
-    const handleFactoryReset = (e: React.FormEvent) => {
+    const handleFactoryReset = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (deleteConfirmation !== 'DELETE') {
@@ -65,7 +66,14 @@ const ForgotPinModal: React.FC<ForgotPinModalProps> = ({ isOpen, onClose }) => {
             return;
         }
 
-        // Clear all localStorage data
+        try {
+            // Clear Tauri secure storage (security data, API keys)
+            await clearSecureStorage();
+        } catch (error) {
+            console.error('Failed to clear secure storage:', error);
+        }
+
+        // Clear all localStorage and sessionStorage data
         localStorage.clear();
         sessionStorage.clear();
 
