@@ -1,5 +1,7 @@
 import React from 'react';
 import { Plus, Upload, PlayCircle, LayoutTemplate } from 'lucide-react';
+import workflowIllustration from '../../assets/workflow-illustration.png';
+import workflowIllustrationDark from '../../assets/workflow-illustration-dark.png';
 
 interface EmptyStateProps {
     onCreateProject: () => void;
@@ -29,13 +31,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onCreateProject, onImportProjec
                 <div className="flex flex-col items-center justify-center py-4">
                     {/* Light theme version */}
                     <img
-                        src="/src/assets/workflow-illustration.png"
+                        src={workflowIllustration}
                         alt="AnnotaLoop Workflow: Document → AI Suggests → Human Reviews → Structured Output"
                         className="max-w-full md:max-w-2xl h-auto object-contain opacity-70 dark:hidden"
                     />
                     {/* Dark theme version */}
                     <img
-                        src="/src/assets/workflow-illustration-dark.png?v=2"
+                        src={workflowIllustrationDark}
                         alt="AnnotaLoop Workflow: Document → AI Suggests → Human Reviews → Structured Output"
                         className="max-w-full md:max-w-2xl h-auto object-contain opacity-70 hidden dark:block"
                     />

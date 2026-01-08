@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Lock } from 'lucide-react';
+import { Lock, RefreshCw, Download, CheckCircle, AlertCircle } from 'lucide-react';
+import { check as checkUpdate } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
+import { getVersion } from '@tauri-apps/api/app';
 
 import LLMConfigSection from './LLMConfigSection';
 import CustomSelect, { type Option, type OptionGroup } from '../ui/CustomSelect';
@@ -14,7 +17,7 @@ interface SettingsModalProps {
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const { security, setSecurity, settings, setSettings } = useApp();
     const { addToast } = useToast();
-    const [activeTab, setActiveTab] = useState<'llm' | 'security' | 'general'>('llm');
+    const [activeTab, setActiveTab] = useState<'llm' | 'security' | 'general' | 'about'>('llm');
     const [activeSubTab, setActiveSubTab] = useState<'mistral' | 'gemini' | 'openai' | 'anthropic' | 'openrouter' | 'ollama' | 'lmstudio'>('mistral');
 
     // PIN management state
@@ -23,7 +26,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [confirmPin, setConfirmPin] = useState('');
     const [pinError, setPinError] = useState('');
 
-    // Reset tab to first tab when modal opens
+    // Update checking state
+    const [currentVersion, setCurrentVersion] = useState('');
+    const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
+    const [updateAvailable, setUpdateAvailable] = useState(false);
+    const [updateVersion, setUpdateVersion] = useState('');
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [downloadProgress, setDownloadProgress] = useState(0);
+
+    // Reset tab to first tab when modal opens and load version
     React.useEffect(() => {
         if (isOpen) {
             setActiveTab('llm');
@@ -33,8 +44,73 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             setNewPin('');
             setConfirmPin('');
             setPinError('');
+            // Load current version
+            getVersion().then(setCurrentVersion).catch(() => setCurrentVersion('Unknown'));
         }
     }, [isOpen]);
+
+    // Function to check for updates manually
+    const handleCheckUpdate = async () => {
+        setIsCheckingUpdate(true);
+        setUpdateAvailable(false);
+        setUpdateVersion('');
+
+        try {
+            const update = await checkUpdate();
+            if (update) {
+                setUpdateAvailable(true);
+                setUpdateVersion(update.version);
+                addToast(`Update available: v${update.version}`, 'success');
+            } else {
+                addToast('You are using the latest version', 'info');
+            }
+        } catch (error) {
+            console.error('Failed to check for updates:', error);
+            addToast('Failed to check for updates', 'error');
+        } finally {
+            setIsCheckingUpdate(false);
+        }
+    };
+
+    // Function to install update
+    const handleInstallUpdate = async () => {
+        if (!updateAvailable) return;
+
+        setIsDownloading(true);
+        try {
+            const update = await checkUpdate();
+            if (update) {
+                let downloaded = 0;
+                let contentLength = 0;
+                await update.downloadAndInstall((event) => {
+                    switch (event.event) {
+                        case 'Started':
+                            contentLength = event.data.contentLength ?? 0;
+                            console.log('Download started');
+                            break;
+                        case 'Progress':
+                            downloaded += event.data.chunkLength;
+                            if (contentLength > 0) {
+                                setDownloadProgress(Math.round((downloaded / contentLength) * 100));
+                            }
+                            break;
+                        case 'Finished':
+                            console.log('Download finished');
+                            break;
+                    }
+                });
+
+                addToast('Update installed! Restarting...', 'success');
+                await relaunch();
+            }
+        } catch (error) {
+            console.error('Failed to install update:', error);
+            addToast('Failed to install update', 'error');
+        } finally {
+            setIsDownloading(false);
+            setDownloadProgress(0);
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -133,6 +209,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         <li onClick={() => setActiveTab('llm')} className={`px-3 py-2 rounded font-medium text-sm cursor-pointer transition-all ${activeTab === 'llm' ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-primary' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>LLM Integration</li>
                         <li onClick={() => setActiveTab('security')} className={`px-3 py-2 rounded font-medium text-sm cursor-pointer transition-all ${activeTab === 'security' ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-primary' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>Security & Lock</li>
                         <li onClick={() => setActiveTab('general')} className={`px-3 py-2 rounded font-medium text-sm cursor-pointer transition-all ${activeTab === 'general' ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-primary' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>General</li>
+                        <li onClick={() => setActiveTab('about')} className={`px-3 py-2 rounded font-medium text-sm cursor-pointer transition-all ${activeTab === 'about' ? 'bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 text-primary' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>About & Updates</li>
                     </ul>
                 </div>
 
@@ -377,6 +454,114 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         <div>
                             <h2 className="text-xl font-bold mb-6">General</h2>
                             <p className="text-gray-500">Application preferences and data management.</p>
+                        </div>
+                    )}
+
+                    {activeTab === 'about' && (
+                        <div>
+                            <h2 className="text-xl font-bold mb-6">About & Updates</h2>
+
+                            {/* App Information */}
+                            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                                        <span className="text-white font-bold text-xl">A</span>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">AnnotaLoop</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Version {currentVersion || 'Loading...'}</p>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-600 dark:text-gray-400">
+                                    AI-assisted document annotation with human-in-the-loop workflows.
+                                </p>
+                            </div>
+
+                            {/* Update Check Section */}
+                            <div className="mb-6">
+                                <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Software Updates</h3>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                    {updateAvailable ? (
+                                        <div className="space-y-3">
+                                            <div className="flex items-start gap-3">
+                                                <AlertCircle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
+                                                <div className="flex-1">
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                                        Update Available
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                        Version {updateVersion} is ready to install
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            {isDownloading && downloadProgress > 0 && (
+                                                <div className="space-y-1">
+                                                    <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
+                                                        <span>Downloading...</span>
+                                                        <span>{downloadProgress}%</span>
+                                                    </div>
+                                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                                        <div
+                                                            className="bg-primary h-2 rounded-full transition-all duration-300"
+                                                            style={{ width: `${downloadProgress}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <button
+                                                onClick={handleInstallUpdate}
+                                                disabled={isDownloading}
+                                                className="w-full px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-400 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                <Download className="w-4 h-4" />
+                                                {isDownloading ? 'Installing...' : 'Install Update'}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            <div className="flex items-start gap-3">
+                                                <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                                                <div>
+                                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                                        Up to Date
+                                                    </p>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                                        You're running the latest version
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={handleCheckUpdate}
+                                                disabled={isCheckingUpdate}
+                                                className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:bg-gray-200 dark:disabled:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                <RefreshCw className={`w-4 h-4 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+                                                {isCheckingUpdate ? 'Checking...' : 'Check for Updates'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Additional Information */}
+                            <div className="space-y-3">
+                                <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300">Links</h3>
+                                <div className="space-y-2">
+                                    <a
+                                        href="https://github.com/tayyab-nlp/AnnotaLoop"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="block p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-900 transition-all group"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-primary">GitHub Repository</span>
+                                            <svg className="w-4 h-4 text-gray-400 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

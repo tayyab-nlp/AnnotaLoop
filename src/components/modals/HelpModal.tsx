@@ -66,22 +66,37 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
             {/* Video Modal Popup */}
             {videoOpen && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-90 animate-fade-in p-4">
-                    <div className="w-full max-w-4xl bg-black rounded-xl overflow-hidden shadow-2xl border border-gray-800 relative">
+                    <div className="w-full max-w-lg bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700 relative p-6">
                         <button
                             onClick={() => setVideoOpen(false)}
-                            className="absolute top-4 right-4 z-10 text-white/50 hover:text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-all"
+                            className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
-                        <div className="aspect-video w-full flex items-center justify-center bg-gray-900">
-                            <iframe
-                                className="w-full h-full"
-                                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            ></iframe>
+                        <div className="text-center">
+                            <div className="mx-auto mb-4 w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                                <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Video Tutorials Available</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                Video tutorials and demos are available on our website and documentation.
+                            </p>
+                            <div className="space-y-2">
+                                <a
+                                    href="https://github.com/tayyab-nlp/AnnotaLoop"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors"
+                                >
+                                    Visit GitHub Repository
+                                </a>
+                                <button
+                                    onClick={() => setVideoOpen(false)}
+                                    className="block w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
