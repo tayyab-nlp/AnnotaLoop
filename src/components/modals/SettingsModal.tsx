@@ -74,7 +74,26 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             }
         } catch (error) {
             console.error('Failed to check for updates:', error);
-            addToast('Failed to check for updates', 'error');
+            // Use Vite's DEV flag for reliable dev mode detection
+            const isDev = import.meta.env.DEV;
+            if (isDev) {
+                addToast('Update checker only works in production builds', 'info');
+            } else {
+                let errorMessage = 'Unknown error';
+                if (error instanceof Error) {
+                    errorMessage = error.message;
+                } else if (typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error && typeof error === 'object') {
+                    errorMessage = JSON.stringify(error);
+                }
+
+                if (errorMessage.includes('404') || errorMessage.includes('not found')) {
+                    addToast('Update server unreachable', 'error');
+                } else {
+                    addToast(`Update check failed: ${errorMessage}`, 'error');
+                }
+            }
         } finally {
             setIsCheckingUpdate(false);
         }

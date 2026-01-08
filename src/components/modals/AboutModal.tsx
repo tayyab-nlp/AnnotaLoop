@@ -20,6 +20,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
     const [updateObject, setUpdateObject] = useState<Awaited<ReturnType<typeof checkUpdate>> | null>(null);
+    const [lastCheckStatus, setLastCheckStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     useEffect(() => {
         if (isOpen) {
@@ -38,18 +39,30 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 setUpdateAvailable(true);
                 setUpdateVersion(update.version);
                 setUpdateObject(update);
+                setLastCheckStatus('success');
                 addToast(`Update available: v${update.version}`, 'success');
             } else {
+                setLastCheckStatus('success');
                 addToast('You are using the latest version', 'info');
             }
         } catch (error) {
             console.error('Failed to check for updates:', error);
-            const isDev = window.location.protocol === 'http:';
+            setLastCheckStatus('error');
+            // Use Vite's DEV flag - more reliable than checking protocol
+            const isDev = import.meta.env.DEV;
             if (isDev) {
                 addToast('Update checker only works in production builds', 'info');
             } else {
                 // Show more specific error for debugging
-                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                let errorMessage = 'Unknown error';
+                if (error instanceof Error) {
+                    errorMessage = error.message;
+                } else if (typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error && typeof error === 'object') {
+                    errorMessage = JSON.stringify(error);
+                }
+
                 if (errorMessage.includes('404') || errorMessage.includes('not found')) {
                     addToast('Update server unreachable. Check your internet connection.', 'error');
                 } else {
@@ -207,7 +220,25 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                             {isDownloading ? 'Installing...' : 'Install Update'}
                                         </button>
                                     </div>
-                                ) : (
+                                ) : lastCheckStatus === 'error' ? (
+                                    <div className="space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white">Check Failed</p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Unable to check for updates</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={handleCheckUpdate}
+                                            disabled={isCheckingUpdate}
+                                            className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <RefreshCw className={`w-4 h-4 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+                                            {isCheckingUpdate ? 'Checking...' : 'Try Again'}
+                                        </button>
+                                    </div>
+                                ) : lastCheckStatus === 'success' ? (
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
                                             <CheckCircle className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
@@ -220,6 +251,24 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                             onClick={handleCheckUpdate}
                                             disabled={isCheckingUpdate}
                                             className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                        >
+                                            <RefreshCw className={`w-4 h-4 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
+                                            {isCheckingUpdate ? 'Checking...' : 'Check for Updates'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <RefreshCw className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900 dark:text-white">Updates</p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Click to check for updates</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={handleCheckUpdate}
+                                            disabled={isCheckingUpdate}
+                                            className="w-full px-4 py-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
                                         >
                                             <RefreshCw className={`w-4 h-4 ${isCheckingUpdate ? 'animate-spin' : ''}`} />
                                             {isCheckingUpdate ? 'Checking...' : 'Check for Updates'}
