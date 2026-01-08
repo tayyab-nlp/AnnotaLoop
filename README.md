@@ -18,15 +18,18 @@
 
 Get the latest version of AnnotaLoop for your platform:
 
-| Platform | Download Link | Architecture |
-|----------|--------------|--------------|
-| **macOS (Apple Silicon)** | [⬇️ Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_aarch64.dmg) | ARM64 |
-| **macOS (Intel)** | [⬇️ Download DMG](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_x64.dmg) | x64 |
-| **Windows** | [⬇️ Download Installer](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_x64-setup.exe) | x64 |
-| **Linux (AppImage)** | [⬇️ Download AppImage](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_amd64.AppImage) | x86_64 |
-| **Linux (Debian)** | [⬇️ Download .deb](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest/download/anotaloopv2_amd64.deb) | x86_64 |
+| Platform | File Pattern | Architecture |
+|----------|-------------|--------------|
+| **macOS (Apple Silicon)** | `AnnotaLoop_x.x.x_aarch64.dmg` | ARM64 |
+| **macOS (Intel)** | `AnnotaLoop_x.x.x_x64.dmg` | x64 |
+| **Windows** | `AnnotaLoop_x.x.x_x64-setup.exe` | x64 |
+| **Linux (AppImage)** | `AnnotaLoop_x.x.x_amd64.AppImage` | x86_64 |
+| **Linux (Debian)** | `AnnotaLoop_x.x.x_amd64.deb` | x86_64 |
+| **Linux (RPM)** | `AnnotaLoop_x.x.x-1.x86_64.rpm` | x86_64 |
 
-> **Note:** For all available versions, visit the [Releases page](https://github.com/tayyab-nlp/AnnotaLoop/releases).
+### [⬇️ Download from Releases Page](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest)
+
+> **Note:** Click the link above and download the appropriate file for your platform from the Assets section.
 
 ### macOS Installation
 
