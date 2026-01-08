@@ -251,42 +251,30 @@ export async function clearSecurityState(): Promise<void> {
 }
 
 /**
- * Migrate security state from localStorage to secure storage
+ * Clear old security state from localStorage (migration disabled - fresh start)
+ * Previous versions stored security in localStorage which persists across installs.
+ * We now just clear it to give users a fresh start.
  */
 export async function migrateSecurityFromLocalStorage(): Promise<void> {
     try {
-        // Check if already migrated (security exists in store)
+        // Just clear any old localStorage security data - don't migrate it
+        // This ensures fresh installs start without the lock screen
+        const localStorageSecurity = localStorage.getItem('security');
+        if (localStorageSecurity) {
+            console.log('[SecureStorage] Found old localStorage security data - clearing it');
+            localStorage.removeItem('security');
+        }
+
+        // Check if Tauri store has security data
         const store = await getSecureStore();
         const existingEnabled = await store.get<boolean>('security_enabled');
 
-        // If security data exists in store, skip migration
-        if (existingEnabled !== null && existingEnabled !== undefined) {
-            console.log('[SecureStorage] Security already in secure storage, skipping migration');
-            return;
+        // If no security in Tauri store, we're done - user will see app without lock
+        if (existingEnabled === null || existingEnabled === undefined) {
+            console.log('[SecureStorage] No security data in Tauri store - clean slate');
         }
-
-        // Check localStorage for security data
-        const localStorageSecurity = localStorage.getItem('security');
-        if (!localStorageSecurity) {
-            console.log('[SecureStorage] No localStorage security data to migrate');
-            return;
-        }
-
-        const parsed = JSON.parse(localStorageSecurity);
-
-        // Save to secure storage
-        await saveSecurityState({
-            enabled: parsed.enabled ?? false,
-            pin: parsed.pin ?? DEFAULT_SECURITY.pin,
-            secret: parsed.secret ?? DEFAULT_SECURITY.secret,
-            locked: parsed.enabled ?? false
-        });
-
-        // Remove from localStorage
-        localStorage.removeItem('security');
-
-        console.log('[SecureStorage] Migrated security state from localStorage to secure storage');
     } catch (error) {
-        console.error('[SecureStorage] Failed to migrate security from localStorage:', error);
+        console.error('[SecureStorage] Failed to clear old security data:', error);
     }
 }
+
