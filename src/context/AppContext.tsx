@@ -157,9 +157,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
                 // Then load from Tauri Store
                 const loadedSecurity = await loadSecurityState();
 
-                // Auto-lock on load if enabled and not unlocked in session
-                if (loadedSecurity.enabled && !sessionStorage.getItem('unlocked')) {
+                // Auto-lock on load if enabled, PIN is actually set (not default), and not unlocked in session
+                // Only lock if user has set up a custom PIN (not the default '1234')
+                const isPinConfigured = loadedSecurity.pin && loadedSecurity.pin !== '1234' && loadedSecurity.pin.length === 4;
+                if (loadedSecurity.enabled && isPinConfigured && !sessionStorage.getItem('unlocked')) {
                     loadedSecurity.locked = true;
+                } else {
+                    // Ensure we don't lock if PIN isn't properly configured
+                    loadedSecurity.locked = false;
                 }
 
                 setSecurity(loadedSecurity);

@@ -35,7 +35,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
 
-    // Factory reset state
+    // Reset app state
     const [showFactoryResetConfirm, setShowFactoryResetConfirm] = useState(false);
     const [factoryResetInput, setFactoryResetInput] = useState('');
 
@@ -49,7 +49,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
             setNewPin('');
             setConfirmPin('');
             setPinError('');
-            // Reset factory reset state
+            // Reset app reset state
             setShowFactoryResetConfirm(false);
             setFactoryResetInput('');
             // Load current version
@@ -478,20 +478,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                         </div>
                                     )}
 
-                                    {/* Danger Zone - Factory Reset */}
+                                    {/* Danger Zone - Reset App & Clear Data */}
                                     <div className="mt-6 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
                                         <label className="block text-xs font-bold text-red-600 dark:text-red-400 uppercase mb-2">Danger Zone</label>
 
                                         {!showFactoryResetConfirm ? (
                                             <>
                                                 <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                                                    Factory reset will clear all your data including projects, documents, and settings.
+                                                    Reset will clear all your data including projects, documents, and settings.
                                                 </p>
                                                 <button
                                                     onClick={() => setShowFactoryResetConfirm(true)}
                                                     className="w-full bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 py-1.5 rounded text-xs font-medium hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                                                 >
-                                                    Factory Reset
+                                                    Reset App & Clear Data
                                                 </button>
                                             </>
                                         ) : (
@@ -523,7 +523,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                                                 }
                                                                 localStorage.clear();
                                                                 sessionStorage.clear();
-                                                                addToast('Factory reset complete. Reloading...', 'success');
+                                                                addToast('Reset complete. Reloading...', 'success');
                                                                 setTimeout(() => window.location.reload(), 1500);
                                                             }
                                                         }}

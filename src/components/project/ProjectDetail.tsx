@@ -138,7 +138,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
                             ref={fileInputRef}
                             type="file"
                             multiple
-                            accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg"
+                            accept=".pdf,.docx,.doc,.txt,.md"
                             onChange={handleFileInputChange}
                             className="hidden"
                         />
@@ -177,7 +177,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({
                             {/* Supported formats */}
                             {!isDragging && (
                                 <p className="text-xs text-gray-400 dark:text-gray-500">
-                                    PDF, DOCX, DOC, TXT, PNG, JPG
+                                    PDF, DOCX, DOC, TXT, MD
                                 </p>
                             )}
                         </div>
