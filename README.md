@@ -18,26 +18,28 @@
 
 Get the latest version of AnnotaLoop for your platform:
 
-| Platform | File Pattern | Architecture |
-|----------|-------------|--------------|
-| **macOS (Apple Silicon)** | `AnnotaLoop_x.x.x_aarch64.dmg` | ARM64 |
-| **macOS (Intel)** | `AnnotaLoop_x.x.x_x64.dmg` | x64 |
-| **Windows** | `AnnotaLoop_x.x.x_x64-setup.exe` | x64 |
-| **Linux (AppImage)** | `AnnotaLoop_x.x.x_amd64.AppImage` | x86_64 |
-| **Linux (Debian)** | `AnnotaLoop_x.x.x_amd64.deb` | x86_64 |
-| **Linux (RPM)** | `AnnotaLoop_x.x.x-1.x86_64.rpm` | x86_64 |
+| Platform | File Pattern | Architecture | Download |
+|----------|-------------|--------------|----------|
+| **macOS (Apple Silicon)** | `AnnotaLoop_x.x.x_aarch64.dmg` | ARM64 | [Download](https://tayyab.io/annotaloop/#download) |
+| **macOS (Intel)** | `AnnotaLoop_x.x.x_x64.dmg` | x64 | [Download](https://tayyab.io/annotaloop/#download) |
+| **Windows** | `AnnotaLoop_x.x.x_x64-setup.exe` | x64 | [Download](https://tayyab.io/annotaloop/#download) |
+| **Linux (AppImage)** | `AnnotaLoop_x.x.x_amd64.AppImage` | x86_64 | [Download](https://tayyab.io/annotaloop/#download) |
+| **Linux (Debian)** | `AnnotaLoop_x.x.x_amd64.deb` | x86_64 | [Download](https://tayyab.io/annotaloop/#download) |
+| **Linux (RPM)** | `AnnotaLoop_x.x.x-1.x86_64.rpm` | x86_64 | [Download](https://tayyab.io/annotaloop/#download) |
 
-### [⬇️ Download from Releases Page](https://github.com/tayyab-nlp/AnnotaLoop/releases/latest)
+### [⬇️ Download from Website](https://tayyab.io/annotaloop/#download)
 
-> **Note:** Click the link above and download the appropriate file for your platform from the Assets section.
+> **Note:** The website will detect your platform automatically. If not, scroll to the Download section and pick the correct file for your OS.
 
 ### macOS Installation
 
 1. Download the appropriate DMG for your Mac (Apple Silicon or Intel)
 2. Open the DMG file
-3. Drag AnnotaLoop to your Applications folder
-4. **First launch:** Right-click the app and select "Open" (due to macOS Gatekeeper)
-5. You may need to allow the app in System Settings > Privacy & Security
+3. Drag **AnnotaLoop** to your **Applications** folder
+4. Open **Terminal** and run:
+   ```bash
+   xattr -cr /Applications/AnnotaLoop.app && open /Applications/AnnotaLoop.app
+
 
 ---
 
