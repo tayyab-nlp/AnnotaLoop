@@ -25,7 +25,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ onCreateProject, onImportProjec
                 {/* Header */}
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-                        Welcome to AnnotaLoop
+                        Get Started with AnnotaLoop
                     </h1>
                     <p className="text-base text-gray-500 dark:text-gray-400 font-light max-w-2xl mx-auto">
                         AI-assisted document annotation with{' '}

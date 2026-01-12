@@ -235,6 +235,12 @@ export function UpdaterBanner() {
             </div>
             <div className="flex items-center gap-2">
                 <button
+                    onClick={() => window.open('https://tayyab.io/annotaloop/releases/', '_blank')}
+                    className="px-3 py-1 text-blue-100 hover:text-white font-medium transition-colors flex items-center gap-1.5"
+                >
+                    What's New
+                </button>
+                <button
                     disabled={busy}
                     onClick={handleUpdate}
                     className="bg-white text-blue-600 px-3 py-1 rounded-md font-semibold hover:bg-gray-100 transition-colors disabled:opacity-50 flex items-center gap-1.5"

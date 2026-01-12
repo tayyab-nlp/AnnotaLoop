@@ -306,14 +306,22 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                                 </div>
                                             </div>
                                         )}
-                                        <button
-                                            onClick={handleInstallUpdate}
-                                            disabled={isDownloading}
-                                            className="w-full px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-400 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
-                                        >
-                                            <Download className="w-4 h-4" />
-                                            {isDownloading ? 'Installing...' : 'Install Update'}
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => openExternal('https://tayyab.io/annotaloop/releases/')}
+                                                className="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors"
+                                            >
+                                                What's New
+                                            </button>
+                                            <button
+                                                onClick={handleInstallUpdate}
+                                                disabled={isDownloading}
+                                                className="flex-1 px-4 py-2 bg-primary hover:bg-primary/90 disabled:bg-gray-400 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                <Download className="w-4 h-4" />
+                                                {isDownloading ? 'Installing...' : 'Install'}
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : lastCheckStatus === 'error' ? (
                                     <div className="space-y-3">
