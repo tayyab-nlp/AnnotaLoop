@@ -284,7 +284,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                                 Retry
                                             </button>
                                             <button
-                                                onClick={() => window.open('https://github.com/tayyab-nlp/AnnotaLoop/releases', '_blank')}
+                                                onClick={() => openExternal('https://github.com/tayyab-nlp/AnnotaLoop/releases')}
                                                 className="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors"
                                             >
                                                 GitHub

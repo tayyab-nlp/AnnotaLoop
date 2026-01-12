@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { check, Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
+import { open } from "@tauri-apps/plugin-shell";
 import { AlertTriangle, Download, RefreshCw, X } from "lucide-react";
 
 interface UpdateError {
@@ -186,7 +187,7 @@ export function UpdaterBanner() {
                                 Retry
                             </button>
                             <button
-                                onClick={() => window.open("https://github.com/tayyab-nlp/AnnotaLoop/releases", "_blank")}
+                                onClick={() => open("https://github.com/tayyab-nlp/AnnotaLoop/releases")}
                                 className="px-3 py-1.5 bg-red-700 text-white rounded font-medium text-sm hover:bg-red-800 transition-colors"
                             >
                                 Download from GitHub
@@ -235,7 +236,7 @@ export function UpdaterBanner() {
             </div>
             <div className="flex items-center gap-2">
                 <button
-                    onClick={() => window.open('https://tayyab.io/annotaloop/releases/', '_blank')}
+                    onClick={() => open('https://tayyab.io/annotaloop/releases/')}
                     className="px-3 py-1 text-blue-100 hover:text-white font-medium transition-colors flex items-center gap-1.5"
                 >
                     What's New
