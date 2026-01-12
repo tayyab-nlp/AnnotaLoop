@@ -25,6 +25,7 @@
     "dialog:allow-open",
     "shell:allow-open",
     "updater:default",
+    "process:default",
     "store:default",
     {
       "identifier": "http:allow-fetch",

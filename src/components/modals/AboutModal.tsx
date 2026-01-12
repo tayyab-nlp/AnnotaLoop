@@ -11,6 +11,12 @@ interface AboutModalProps {
     onClose: () => void;
 }
 
+interface InstallError {
+    message: string;
+    details: string;
+    tips: string[];
+}
+
 const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
     const { addToast } = useToast();
     const [currentVersion, setCurrentVersion] = useState<string>('');
@@ -18,9 +24,10 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
     const [updateAvailable, setUpdateAvailable] = useState(false);
     const [updateVersion, setUpdateVersion] = useState('');
     const [isDownloading, setIsDownloading] = useState(false);
-    const [downloadProgress, setDownloadProgress] = useState(0);
+    const [downloadProgress, setDownloadProgress] = useState<{ downloaded: number; total: number } | null>(null);
     const [updateObject, setUpdateObject] = useState<Awaited<ReturnType<typeof checkUpdate>> | null>(null);
     const [lastCheckStatus, setLastCheckStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [installError, setInstallError] = useState<InstallError | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -74,27 +81,84 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
         }
     };
 
+    const parseInstallError = (e: any): InstallError => {
+        const rawMessage = e?.message ?? String(e);
+
+        if (rawMessage.includes('network') || rawMessage.includes('fetch') || rawMessage.includes('connection')) {
+            return {
+                message: 'Network Error',
+                details: 'Could not download the update.',
+                tips: ['Check your internet connection', 'Try disabling VPN or proxy']
+            };
+        }
+
+        if (rawMessage.includes('signature') || rawMessage.includes('verify')) {
+            return {
+                message: 'Verification Failed',
+                details: 'Update package could not be verified.',
+                tips: ['Try again in a few minutes', 'Download from GitHub instead']
+            };
+        }
+
+        if (rawMessage.includes('permission') || rawMessage.includes('EPERM')) {
+            return {
+                message: 'Permission Denied',
+                details: 'Cannot write to application directory.',
+                tips: ['Close other instances', 'Check disk permissions']
+            };
+        }
+
+        return {
+            message: 'Install Failed',
+            details: rawMessage.length > 80 ? rawMessage.substring(0, 80) + '...' : rawMessage,
+            tips: ['Try again later', 'Download from GitHub releases']
+        };
+    };
+
     const handleInstallUpdate = async () => {
         if (!updateObject) return;
 
         setIsDownloading(true);
+        setInstallError(null);
+        setDownloadProgress(null);
+
         try {
+            let downloadedBytes = 0;
+
             await updateObject.downloadAndInstall((event) => {
-                if (event.event === 'Progress') {
-                    const data = event.data as { chunkLength: number; contentLength?: number };
+                if (event.event === 'Started') {
+                    const data = event.data as { contentLength?: number };
                     if (data.contentLength) {
-                        const progress = Math.round((data.chunkLength / data.contentLength) * 100);
-                        setDownloadProgress(progress);
+                        setDownloadProgress({ downloaded: 0, total: data.contentLength });
+                    }
+                } else if (event.event === 'Progress') {
+                    const data = event.data as { chunkLength: number; contentLength?: number };
+                    downloadedBytes += data.chunkLength;
+                    if (data.contentLength) {
+                        setDownloadProgress({ downloaded: downloadedBytes, total: data.contentLength });
                     }
                 }
             });
+
             addToast('Update installed! Restarting...', 'success');
-            await relaunch();
+
+            try {
+                await relaunch();
+            } catch (relaunchErr) {
+                console.error('Relaunch failed:', relaunchErr);
+                setInstallError({
+                    message: 'Update Installed',
+                    details: 'Please restart the app manually.',
+                    tips: ['Close and reopen the application']
+                });
+            }
         } catch (error) {
             console.error('Failed to install update:', error);
-            addToast('Failed to install update', 'error');
+            setInstallError(parseInstallError(error));
+            addToast(`Update failed: ${(error as Error).message || 'Unknown error'}`, 'error');
         } finally {
             setIsDownloading(false);
+            setDownloadProgress(null);
         }
     };
 
@@ -191,7 +255,38 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                         <div>
                             <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Software Updates</h3>
                             <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-                                {updateAvailable ? (
+                                {installError ? (
+                                    <div className="space-y-3">
+                                        <div className="flex items-start gap-3">
+                                            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+                                            <div className="flex-1">
+                                                <p className="text-sm font-medium text-red-600 dark:text-red-400">{installError.message}</p>
+                                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{installError.details}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded p-2">
+                                            <span className="font-medium">Tips:</span>
+                                            <ul className="list-disc list-inside mt-1 space-y-0.5">
+                                                {installError.tips.map((tip, i) => <li key={i}>{tip}</li>)}
+                                            </ul>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => { setInstallError(null); handleInstallUpdate(); }}
+                                                className="flex-1 px-3 py-2 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium text-sm transition-colors flex items-center justify-center gap-2"
+                                            >
+                                                <RefreshCw className="w-4 h-4" />
+                                                Retry
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://github.com/tayyab-nlp/AnnotaLoop/releases', '_blank')}
+                                                className="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium text-sm transition-colors"
+                                            >
+                                                GitHub
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : updateAvailable ? (
                                     <div className="space-y-3">
                                         <div className="flex items-start gap-3">
                                             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
@@ -200,14 +295,14 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                                                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Version {updateVersion} is ready</p>
                                             </div>
                                         </div>
-                                        {isDownloading && downloadProgress > 0 && (
+                                        {downloadProgress && (
                                             <div className="space-y-1">
                                                 <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400">
                                                     <span>Downloading...</span>
-                                                    <span>{downloadProgress}%</span>
+                                                    <span>{Math.round((downloadProgress.downloaded / downloadProgress.total) * 100)}%</span>
                                                 </div>
                                                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                                                    <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{ width: `${downloadProgress}%` }} />
+                                                    <div className="bg-primary h-2 rounded-full transition-all duration-300" style={{ width: `${(downloadProgress.downloaded / downloadProgress.total) * 100}%` }} />
                                                 </div>
                                             </div>
                                         )}
