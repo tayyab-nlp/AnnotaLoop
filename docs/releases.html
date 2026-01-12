@@ -39,7 +39,6 @@
             line-height: 1.6;
         }
 
-        /* Animated background */
         .bg-gradient {
             position: fixed;
             top: 0;
@@ -53,7 +52,6 @@
             z-index: 0;
         }
 
-        /* Header */
         header {
             position: relative;
             z-index: 10;
@@ -135,7 +133,6 @@
             box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
         }
 
-        /* Main content */
         main {
             position: relative;
             z-index: 10;
@@ -200,7 +197,6 @@
             margin: 0 auto;
         }
 
-        /* Release sections */
         .releases {
             display: flex;
             flex-direction: column;
@@ -248,6 +244,11 @@
             font-size: 0.75rem;
             font-weight: 600;
             border-radius: 50px;
+        }
+
+        .release-tag.beta {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
         }
 
         .release-date {
@@ -319,7 +320,6 @@
             height: 12px;
         }
 
-        /* Footer */
         footer {
             position: relative;
             z-index: 10;
@@ -339,7 +339,6 @@
             text-decoration: underline;
         }
 
-        /* Responsive */
         @media (max-width: 640px) {
             header {
                 padding: 1rem;
@@ -395,7 +394,7 @@
         <section class="hero">
             <div class="version-badge">
                 <span class="dot"></span>
-                Latest Release
+                Public Beta
             </div>
             <h1>What's New in AnnotaLoop</h1>
             <p>Discover the latest features, improvements, and bug fixes that make your annotation workflow even better.
@@ -403,12 +402,12 @@
         </section>
 
         <div class="releases">
-            <!-- Latest Release -->
+            <!-- v1.0.0 Public Beta -->
             <article class="release-card">
                 <div class="release-header">
                     <div class="release-version">
-                        <h2>Version 0.2.9</h2>
-                        <span class="release-tag">Latest</span>
+                        <h2>Version 1.0.0</h2>
+                        <span class="release-tag beta">Public Beta</span>
                     </div>
                     <span class="release-date">January 12, 2026</span>
                 </div>
@@ -417,7 +416,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2v20M2 12h20" />
                         </svg>
-                        What's Changed
+                        First Public Release
                     </h3>
                     <ul class="changes-list">
                         <li>
@@ -426,103 +425,7 @@
                                     <path d="M12 5v14M5 12h14" />
                                 </svg>
                             </span>
-                            Added "What's New" button in update notifications to view release notes
-                        </li>
-                        <li>
-                            <span class="change-icon fix">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg>
-                            </span>
-                            Fixed auto-update system - app now properly restarts after installing updates
-                        </li>
-                        <li>
-                            <span class="change-icon improve">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M12 19V5M5 12l7-7 7 7" />
-                                </svg>
-                            </span>
-                            Improved update progress indicator with download speed and file size
-                        </li>
-                        <li>
-                            <span class="change-icon improve">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M12 19V5M5 12l7-7 7 7" />
-                                </svg>
-                            </span>
-                            Better error messages with troubleshooting tips when updates fail
-                        </li>
-                    </ul>
-                </div>
-            </article>
-
-            <!-- Previous Release -->
-            <article class="release-card">
-                <div class="release-header">
-                    <div class="release-version">
-                        <h2>Version 0.2.6</h2>
-                    </div>
-                    <span class="release-date">January 9, 2026</span>
-                </div>
-                <div class="release-content">
-                    <h3>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v20M2 12h20" />
-                        </svg>
-                        What's Changed
-                    </h3>
-                    <ul class="changes-list">
-                        <li>
-                            <span class="change-icon fix">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg>
-                            </span>
-                            Fixed PIN lock screen appearing on fresh install
-                        </li>
-                        <li>
-                            <span class="change-icon fix">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg>
-                            </span>
-                            Corrected supported file types (PDF, Word, Text only)
-                        </li>
-                        <li>
-                            <span class="change-icon improve">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M12 19V5M5 12l7-7 7 7" />
-                                </svg>
-                            </span>
-                            Renamed "Factory Reset" to "Reset App & Clear Data" for clarity
-                        </li>
-                    </ul>
-                </div>
-            </article>
-
-            <!-- Earlier Release -->
-            <article class="release-card">
-                <div class="release-header">
-                    <div class="release-version">
-                        <h2>Version 0.2.0</h2>
-                    </div>
-                    <span class="release-date">January 8, 2026</span>
-                </div>
-                <div class="release-content">
-                    <h3>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 2v20M2 12h20" />
-                        </svg>
-                        What's Changed
-                    </h3>
-                    <ul class="changes-list">
-                        <li>
-                            <span class="change-icon new">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M12 5v14M5 12h14" />
-                                </svg>
-                            </span>
-                            Added automatic update checker with in-app installation
+                            Human-in-the-loop annotation workflow with AI suggestions
                         </li>
                         <li>
                             <span class="change-icon new">
@@ -530,15 +433,63 @@
                                     <path d="M12 5v14M5 12h14" />
                                 </svg>
                             </span>
-                            New About modal with version info and update status
+                            Support for PDF, Word, and text document formats
                         </li>
                         <li>
-                            <span class="change-icon improve">
+                            <span class="change-icon new">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <path d="M12 19V5M5 12l7-7 7 7" />
+                                    <path d="M12 5v14M5 12h14" />
                                 </svg>
                             </span>
-                            Polished UI with improved animations and dark mode
+                            Privacy-first architecture with local LLM support (Ollama)
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Multi-provider LLM integration (OpenAI, Anthropic, Google, local)
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Custom labels and natural language extraction rules
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Export to JSON, CSV, and annotated PDF formats
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Batch document processing with confidence scores
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Cross-platform support (macOS, Windows, Linux)
+                        </li>
+                        <li>
+                            <span class="change-icon new">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg>
+                            </span>
+                            Automatic updates with "What's New" release notes
                         </li>
                     </ul>
                 </div>

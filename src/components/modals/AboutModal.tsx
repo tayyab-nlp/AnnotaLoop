@@ -191,7 +191,12 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                         </div>
                         <div>
                             <h2 className="text-xl font-bold dark:text-white">AnnotaLoop</h2>
-                            <p className="text-primary font-medium text-sm">Version {currentVersion || '...'}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <p className="text-primary font-medium text-sm">Version {currentVersion || '...'}</p>
+                                <span className="px-1.5 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-semibold rounded">
+                                    Public Beta
+                                </span>
+                            </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 AI-assisted document annotation with human-in-the-loop workflows
                             </p>
